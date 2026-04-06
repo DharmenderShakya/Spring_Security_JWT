@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,22 @@ public class UserCustomRepository {
         userStore.put("ravi", createUser("ravi", Role.SUPER_ADMIN));
         userStore.put("roshan", createUser("roshan", Role.MODERATOR));
     }
-
+    
+    public void saveUser(Users users) {
+        userStore.put(users.getUsername().toLowerCase(), createUser(users));
+    }
+    
+    
+    public Users createUser(Users users) {
+        Users user = new Users();
+        user.setUserName(users.getUsername());
+        user.setPassword(new BCryptPasswordEncoder().encode(users.getPassword())); // admin123
+        user.setRole(users.getRole());
+        user.setAccountNonLocked(false);
+        user.setFailedAttempts(0);
+        return user;
+    }
+    
     private Users createUser(String username, Role role) {
         Users user = new Users();
         user.setUserName(username);
@@ -33,6 +49,7 @@ public class UserCustomRepository {
         user.setFailedAttempts(0);
         return user;
     }
+    
 
     public Optional<Users> getByUserName(String userName) {
         return Optional.ofNullable(userStore.get(userName.toLowerCase()));
