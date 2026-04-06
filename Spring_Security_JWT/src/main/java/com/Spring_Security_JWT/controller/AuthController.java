@@ -63,6 +63,15 @@ public class AuthController {
 
 	}
 	
+	@PostMapping("/createUser")
+	public String login(@RequestBody Users request) {
+
+		userRepository.saveUser(request);
+		
+		return "User Successfully created";
+
+	}
+	
 	@PutMapping("/unlock/{username}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public String unlockAccount(@PathVariable String username) {
